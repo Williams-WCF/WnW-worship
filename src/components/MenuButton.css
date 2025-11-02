@@ -1,0 +1,51 @@
+.menu-container{
+  position:relative;
+
+}
+.menu-icon{
+background:none;
+border:none;
+cursor: pointer;
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.bar {
+  width: 25px;
+  height: 3px;
+  background-color: #d3c7e4;
+  transition: all 0.3s ease;
+}
+
+.bar1.active {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.bar2.active{
+  opacity: 0;
+}
+.bar3.active{
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+.menu-dropdown{
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background-color: #46166b;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+
+}
+.menu-dropdown a {
+  color: white;
+  text-decoration: none;
+  margin: 5px 0;
+
+}
+
+.menu-dropdown a:hover{
+  text-decoration: underline;
+}

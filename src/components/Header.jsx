@@ -1,9 +1,12 @@
 //this is the header
+import MenuButton from "./MenuButton";
+import "./MenuButton.css";
+
 export default function Header(){
   return(
-    <div>
+    <div className='header'>
       <h1>WCF Lyrics App</h1>
-      <p>Welcome to the WCF and enjoy seamless lyrics</p>
+      <MenuButton />
     </div>
   );
 }

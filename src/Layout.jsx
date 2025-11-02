@@ -3,10 +3,11 @@ import TopNavigation from './components/TopNavigation';
 import MainNavigation from './components/MainNavigation';
 import Footer from './components/Footer';
 import { Outlet } from 'react-router-dom';
+import "./Layout.css";
 
 export default function Layout() {
   return (
-    <div>
+    <div className="layout-container">
       <Header />
       <TopNavigation />
       <MainNavigation />
