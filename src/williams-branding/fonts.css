@@ -1,0 +1,9 @@
+/*Import the fonts of the Eph-family type
+These will be used until we can get the official fonts */
+
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Montserrat:wght@400;600&display=swap');
+
+:root {
+  --font-serif: "Merriweather", serif;
+  --font-sans: "Montserrat", sans-serif;
+}

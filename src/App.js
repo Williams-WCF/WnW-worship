@@ -1,3 +1,5 @@
+import "./williams-branding/fonts.css";
+
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -12,7 +14,7 @@ import Signup from "./pages/Signup";
 import Suggest from "./pages/Suggest";
 import Songs from "./pages/Songs";
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -31,5 +33,3 @@ function App() {
     </BrowserRouter>
   );
 }
-
-export default App;
