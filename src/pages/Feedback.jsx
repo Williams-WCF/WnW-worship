@@ -1,4 +1,4 @@
-//this is the feedback form
+//this is the feedback form component
 export default function Feedback(){
   return(
     <div>
@@ -6,6 +6,5 @@ export default function Feedback(){
       <input className= "unix" placeholder="UNIX (optional)"/>
       <input className= "comment" placeholder="What are your thoughts?"/>
     </div>
-
   );
 }

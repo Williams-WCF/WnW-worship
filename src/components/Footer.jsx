@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { FaInstagram, FaWhatsapp, FaUsers } from "react-icons/fa";
+import logo from "../components/images/logo.jpg";
 
 export default function Footer() {
   return (
@@ -10,37 +12,41 @@ export default function Footer() {
             <h4>Quick Links</h4>
             <ul>
               <li><Link to="/lyrics">Lyrics</Link></li>
-              <li><Link to="/suggest">Suggest</Link></li>
               <li><Link to="/songs">Songs</Link></li>
-              <li><Link to="/learn-more">Learn More</Link></li>
-              <li><Link to="/feedback">Feedback</Link></li>
+              <li><Link to="/suggest">Suggest</Link></li>
             </ul>
           </div>
 
           <div className="footer-column center">
-            <h4>Information</h4>
-            <ul>
-              <li><Link to="/comment">Comment Form</Link></li>
-              <li><Link to="/privacy">Privacy Policy</Link></li>
-              <li><Link to="/non-discrimination">Non-Discrimination Statement</Link></li>
-            </ul>
+            <img src={logo} alt="WCF Logo" className="home-logo" />
           </div>
 
           <div className="footer-column right">
             <h4>Contact</h4>
-            <address>
-              <p>Hopkins Hall</p>
-              <p>880 Main Street</p>
-              <p>Williamstown, MA 01267 USA</p>
-              <p>(413) 597-3131</p>
-            </address>
+            <div className="social-icons">
+            <a href = "https://www.instagram.com/williamschristianfellowship"
+             target="_blank" rel="noopener noreferrer" className="ig-icon">
+            <FaInstagram size={30} />
+            </a>
+            <a href="https://groupme.com/join_group/3587023/GGqkmG7J" target="_blank"
+            rel="noopener noreferrer"
+            className="whatsapp-icon">
+            <FaWhatsapp size={28} />
+            </a>
+            <a href="https://groupme.com/join_group/3587023/GGqkmG7J"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="groupme-icon">
+            <FaUsers size={28} />
+            </a>
+            </div>
           </div>
         </div>
 
         <hr className="footer-divider" />
 
         <div className="footer-bottom">
-          <p>Log In • Copyright {new Date().getFullYear()} Williams Christian Fellowship</p>
+          <p>&copy; {new Date().getFullYear()} Williams Christian Fellowship</p>
         </div>
       </div>
     </footer>

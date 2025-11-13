@@ -1,0 +1,99 @@
+/*this is the CSS code for the LikedSongs.jsx file*/
+
+
+.liked-songs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  background-color: #faf7ff;
+  border-radius: 10px;
+  padding: 1rem;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+}
+
+.liked-songs-title {
+  width: 100%;
+  text-align: center;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: #500082;
+  margin-bottom: 0.8rem;
+}
+
+.liked-song-item {
+  background-color: #ffffff;
+  border: 1px solid #d3c3ff;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+.liked-song-item:hover {
+  background-color: #e8d9ff;
+  transform: scale(1.02);
+}
+
+.song-title {
+  flex: 1;
+  color: #500082;
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.song-likes {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #d3006a;
+  font-weight: 600;
+  min-width: 55px;
+  justify-content: flex-end;
+}
+
+.heart-icon {
+  font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+}
+
+@media (max-width: 480px) {
+  .liked-songs {
+    padding: 0.7rem;
+    gap: 0.6rem;
+    max-width: 95%;
+  }
+
+  .liked-song-item {
+    padding: 0.7rem 0.8rem;
+  }
+
+  .song-title {
+    font-size: 1rem;
+  }
+
+  .song-likes {
+    min-width: 45px;
+  }
+}
+
+@media (max-width: 768px) {
+  .liked-songs {
+    max-width: 90%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .liked-songs {
+    max-width: 700px;
+  }
+}

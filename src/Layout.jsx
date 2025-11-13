@@ -1,3 +1,6 @@
+/*
+this is the global layout template for all the pages except the on-launch homepage*/ 
+
 import Header from './components/Header';
 import TopNavigation from './components/TopNavigation';
 import MainNavigation from './components/MainNavigation';
@@ -9,13 +12,13 @@ export default function Layout() {
   return (
     <div className="layout-container">
       <Header />
-      <TopNavigation />
+      <div className="main-nav">
       <MainNavigation />
-
+      <TopNavigation />
+      </div>
       <main>
         <Outlet />
       </main>
-      
       <Footer />
     </div>
   );
