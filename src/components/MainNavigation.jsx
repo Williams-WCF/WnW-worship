@@ -1,16 +1,24 @@
-import { Link } from 'react-router-dom';
+/*this is the main navigation bar component which renders links to, home,lyrics,liked songs, and suggest using react router’s link element*/
 
-//this is the main navigation bar
-export default function MainNavigation(){
-  return(
+import { Link } from 'react-router-dom';
+import {FaHome, FaHeart, FaMusic, FaCommentDots } from "react-icons/fa";
+
+
+export default function MainNavigation() {
+  return (
     <div className="nav-bar">
-      <input className= "search-bar" placeholder="Search a song"/>
-      <Link to="/" className="home">Home</Link>
-      <Link to="/lyrics" className="lyrics">Lyrics</Link>
-      <Link to="/suggest" className="suggest">Suggest</Link>
-      <Link to="/songs" className="songs">Songs</Link>
-      <Link to="/feedback" className="feedback">Feedback</Link>
-      <Link to="/learn-more" className="learn-more">Learn More</Link>
+      <Link to="/main-home" className="nav-link">
+        <span className="emoji"><FaHome size={18} style={{ marginRight: "8px" }} /></span> Home
+      </Link>
+      <Link to="/lyrics" className="nav-link">
+        <span className="emoji"><FaMusic size={18} color="#9c95a0ff" title="Lyrics" /></span> Lyrics
+      </Link>
+      <Link to="/songs" className="nav-link">
+        <span className="emoji"><FaHeart size={18} color="#e63946" title="Like" /></span> Liked Songs
+      </Link>
+      <Link to="/suggest" className="nav-link">
+        <span className="emoji"><FaCommentDots size={18} color="#ffd700" title="Suggest" /></span> Suggest
+      </Link>
     </div>
   );
 }
