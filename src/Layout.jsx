@@ -14,7 +14,7 @@ export default function Layout() {
       <Header />
       <div className="main-nav">
       <MainNavigation />
-      <TopNavigation />
+      {/* <TopNavigation /> */}
       </div>
       <main>
         <Outlet />

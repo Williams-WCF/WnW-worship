@@ -15,6 +15,11 @@ html, body {
   min-height: 100vh;
 }
 
+.layout-container main {
+  flex: 1;
+  min-height: 70vh;
+}
+
 .header {
   z-index:2000;
   width: 100vw;
@@ -204,6 +209,9 @@ html, body {
   padding: 2rem;
   max-width: 700px;
   margin: 2rem auto;
+  min-height: 56vh;
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
 }
@@ -215,15 +223,63 @@ html, body {
   font-weight: 600;
 }
 
+.lyrics-title-input {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid #c4b5fd;
+  background-color: #ffffff;
+  color: #3c1361;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lyrics-title-input:focus {
+  border-color: #500082;
+  box-shadow: 0 0 6px rgba(80, 0, 130, 0.3);
+}
+
+.lyrics-title-display {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3c1361;
+}
+
+.lyrics-title-placeholder {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  color: #7a6b99;
+  font-style: italic;
+}
+
 .lyrics-display {
   background-color: white;
   border-radius: 12px;
   margin-top: 1.5rem;
   padding: 1.5rem;
-  min-height: 150px;
+  min-height: 45vh;
+  flex: 1;
   border: 1px solid #d8caff;
   text-align: left;
   overflow-y: auto;
+}
+
+.lyrics-input {
+  width: 100%;
+  min-height: 40vh;
+  border: none;
+  outline: none;
+  resize: vertical;
+  font-family: "Courier New", monospace;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  background: transparent;
 }
 
 .lyrics-text {
@@ -239,21 +295,194 @@ html, body {
   text-align: center;
 }
 
+.lyrics-page {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem 3rem;
+}
+
+.lyrics-console {
+  width: 100%;
+  max-width: 900px;
+  background: rgba(80, 0, 130, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 24px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 20px 60px rgba(23, 5, 37, 0.35);
+}
+
+.lyrics-console-title {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  color: #ffd700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.lyrics-meta {
+  margin-bottom: 1.5rem;
+}
+
+.meta-inputs {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.meta-input {
+  flex: 1;
+  min-width: 220px;
+  padding: 0.9rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-size: 1rem;
+  outline: none;
+}
+
+.meta-input::placeholder {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.meta-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.meta-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #f4e7ff;
+}
+
+.meta-artist {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.lyrics-editor {
+  width: 100%;
+  min-height: 260px;
+  padding: 2.75rem 1.25rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 1.05rem;
+  line-height: 1.9;
+  resize: vertical;
+  outline: none;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
+.lyrics-editor-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+}
+
+.lyrics-editor-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 0.5rem;
+  z-index: 2;
+}
+
+.lyrics-action {
+  border: none;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.lyrics-action:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.lyrics-action.danger {
+  background: rgba(255, 215, 0, 0.9);
+  color: #3c1361;
+}
+
+.lyrics-action.danger:hover {
+  background: rgba(255, 215, 0, 1);
+}
+
+.lyrics-editor.collapsed {
+  min-height: 3.8rem;
+  height: 3.8rem;
+  resize: none;
+  overflow: hidden;
+}
+
+.lyrics-display {
+  min-height: 45vh;
+  padding: 0.5rem 0.25rem;
+  color: #f6f1ff;
+  font-size: 1.35rem;
+  line-height: 2.3;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  overflow: hidden;
+}
+
+.lyrics-line {
+  opacity: 0.55;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.lyrics-line.active {
+  opacity: 1;
+  transform: scale(1.02);
+  color: #ffd700;
+}
+
+.lyrics-line:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .lyrics-console {
+    padding: 1.5rem;
+  }
+
+  .lyrics-display {
+    font-size: 1.15rem;
+    line-height: 2.1;
+  }
+}
+
 .footer {
   background: linear-gradient(to top, #3b0068, #500082);
   color: white;
-  margin-top: 10rem;
-  padding: 2rem;
+  margin-top: 2rem;
+  padding: 2.5rem 1.5rem;
   font-family: "Merriweather", serif;
   border-top: 3px solid #d0aaff;
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3);
-  height: 15%;
+  height: auto;
 }
 
 .footer-content {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
 .footer-title {
@@ -268,7 +497,7 @@ html, body {
 .footer-main {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 3rem;
   flex-wrap: wrap;
   border-top: 1px solid rgba(255, 255, 255, 0.2);
@@ -285,6 +514,13 @@ html, body {
   justify-content: center;
   align-items: center;
   flex: 0 0 200px;
+}
+
+.footer .home-logo {
+  width: 120px;
+  height: 120px;
+  margin: 0;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.25);
 }
 
 .footer-column h4 {
@@ -313,7 +549,8 @@ html, body {
 .footer-column.right {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .footer-column a:hover {
@@ -334,10 +571,42 @@ html, body {
 
 .social-icons {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 1.2rem;
   margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 2rem 1.25rem;
+  }
+
+  .footer-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .footer-column {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .footer-column.right {
+    align-items: center;
+    text-align: center;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+
+  .footer .home-logo {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 .ig-icon,
