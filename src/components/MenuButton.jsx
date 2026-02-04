@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 export default function MenuButton(){
   const [open, setOpen] = useState(false);
   const handleLinkClick = () => setOpen(false);
-  const { user, isAdmin } = useAuth();
+  const {isAdmin } = useAuth();
 
   return (
     <div className="menu-container" >

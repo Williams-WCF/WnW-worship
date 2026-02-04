@@ -1,7 +1,7 @@
 /*this is the main navigation bar component which renders links to, home,lyrics,liked songs, and suggest using react router’s link element*/
 
 import { Link } from 'react-router-dom';
-import {FaHome, FaHeart, FaMusic, FaCommentDots } from "react-icons/fa";
+import {FaHeart, FaMusic, FaCommentDots } from "react-icons/fa";
 
 
 export default function MainNavigation() {
