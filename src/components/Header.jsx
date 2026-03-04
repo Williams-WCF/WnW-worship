@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <header className="header">
       <div className="header-left">
-        <Link to="/main-home" className="logo-link">
+        <Link to="/lyrics" className="logo-link">
           <img src={logo} alt="WCF Logo" className="header-logo" />
         </Link>
         <h1 className="header-title">WCF Wednesday Night Worship</h1>
