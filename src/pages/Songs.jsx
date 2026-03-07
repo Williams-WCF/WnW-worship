@@ -1,56 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LikedSongs from "../components/LikedSongs";
 import "../components/LikedSongs.css";
+import { supabase } from "../supabaseClient";
+import { useAuth } from "../hooks/useAuth";
 
 export default function Songs() {
-  const [songs] = useState([
-    {
-      title: "Casting Crowns – Nathaniel Bassey",
-      likes: 30,
-      lyrics: `Casting crowns
-Lifting hands
-Bowing hearts
-Is all we’ve come to do
-Adonai, You reign on high...`,
-    },
-    {
-      title: "Oceans – Hillsong United",
-      likes: 8,
-      lyrics: `Spirit lead me where my trust is without borders...`,
-    },
-    {
-      title: "Way Maker – Sinach",
-      likes: 20,
-      lyrics: `Way maker, miracle worker, promise keeper...`,
-    },
-    {
-      title: "Reckless Love – Cory Asbury",
-      likes: 17,
-      lyrics: `Oh, the overwhelming, never-ending reckless love of God...`,
-    },
-    {
-      title: "What a Beautiful Name – Hillsong Worship",
-      likes: 25,
-      lyrics: `What a beautiful Name it is, the Name of Jesus...`,
-    },
-  ]);
+  const { user } = useAuth();
+  const [songs, setSongs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [selectedSong, setSelectedSong] = useState(null);
+  useEffect(() => {
+    if (!user) { setLoading(false); return; }
 
-  const handleSelect = (song) => {
-    setSelectedSong(song);
-  };
+    const fetchLikedSongs = async () => {
+      setLoading(true);
+
+      // Fetch all song_likes to compute total likes per song
+      const { data: allLikes } = await supabase
+        .from('song_likes')
+        .select('song_title, user_id');
+
+      // Fetch songs this user liked
+      const { data: userLikes } = await supabase
+        .from('song_likes')
+        .select('song_title, liked_at')
+        .eq('user_id', user.id)
+        .order('liked_at', { ascending: false });
+
+      if (userLikes && allLikes) {
+        const countMap = {};
+        allLikes.forEach(({ song_title }) => {
+          countMap[song_title] = (countMap[song_title] || 0) + 1;
+        });
+
+        const formatted = userLikes.map((row) => ({
+          title: row.song_title,
+          likes: countMap[row.song_title] || 1,
+        }));
+        setSongs(formatted);
+      }
+
+      setLoading(false);
+    };
+
+    fetchLikedSongs();
+  }, [user]);
 
   return (
     <div className="songs-container">
-      <LikedSongs songs={songs} onSelect={handleSelect} />
-
-      {selectedSong && (
-        <div className="lyrics-box">
-          <h3>{selectedSong.title}</h3>
-          <pre className="lyrics-text">{selectedSong.lyrics}</pre>
-        </div>
-      )}
+      <LikedSongs songs={songs} loading={loading} user={user} />
     </div>
   );
 }

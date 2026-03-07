@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 import { useLyricsSync } from '../hooks/useLyricsSync';
+import { supabase } from '../supabaseClient';
 
 export default function Lyrics() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
   const {
     content,
     title,
@@ -15,6 +17,53 @@ export default function Lyrics() {
     updateCurrentLine
   } = useLyricsSync();
   const [isExpanded, setIsExpanded] = useState(true);
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
+  // Fetch like state whenever the song title changes
+  useEffect(() => {
+    if (!title) { setLikeCount(0); setLiked(false); return; }
+
+    const fetchLikes = async () => {
+      const { count } = await supabase
+        .from('song_likes')
+        .select('*', { count: 'exact', head: true })
+        .eq('song_title', title);
+      setLikeCount(count ?? 0);
+
+      if (user) {
+        const { data } = await supabase
+          .from('song_likes')
+          .select('id')
+          .eq('song_title', title)
+          .eq('user_id', user.id)
+          .maybeSingle();
+        setLiked(!!data);
+      }
+    };
+
+    fetchLikes();
+  }, [title, user]);
+
+  const handleLike = async () => {
+    if (!user || !title) return;
+
+    if (liked) {
+      await supabase
+        .from('song_likes')
+        .delete()
+        .eq('song_title', title)
+        .eq('user_id', user.id);
+      setLiked(false);
+      setLikeCount((c) => c - 1);
+    } else {
+      await supabase
+        .from('song_likes')
+        .insert([{ song_title: title, user_id: user.id }]);
+      setLiked(true);
+      setLikeCount((c) => c + 1);
+    }
+  };
 
   const lines = useMemo(() => content.split('\n'), [content]);
 
@@ -48,6 +97,20 @@ export default function Lyrics() {
             </div>
           )}
         </div>
+
+        {user && (
+          <div style={{ margin: '0.75rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <button
+              onClick={handleLike}
+              disabled={!title}
+              style={{ background: 'none', border: 'none', cursor: title ? 'pointer' : 'default', fontSize: '1.4rem', color: liked ? '#e74c3c' : '#aaa', opacity: title ? 1 : 0.4 }}
+              title={!title ? 'No song playing' : liked ? 'Unlike' : 'Like this song'}
+            >
+              {liked ? <FaHeart /> : <FaRegHeart />}
+            </button>
+            <span style={{ fontSize: '0.95rem', color: '#666' }}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
+          </div>
+        )}
 
         {isAdmin && (
           <div className="lyrics-editor-wrapper">
