@@ -94,26 +94,40 @@ export default function Suggest() {
           {suggestions.length === 0 ? (
             <p>No suggestions yet.</p>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={thStyle}>Song</th>
-                  <th style={thStyle}>Artist</th>
-                  <th style={thStyle}>Comments</th>
-                  <th style={thStyle}>Submitted</th>
-                </tr>
-              </thead>
-              <tbody>
-                {suggestions.map((s) => (
-                  <tr key={s.id}>
-                    <td style={tdStyle}>{s.song_name}</td>
-                    <td style={tdStyle}>{s.artist_name || "—"}</td>
-                    <td style={tdStyle}>{s.comments || "—"}</td>
-                    <td style={tdStyle}>{new Date(s.submitted_at).toLocaleString()}</td>
+            <div style={{ overflowX: "auto", width: "100%" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: "300px" }}>
+                <colgroup>
+                  <col style={{ width: "22%" }} />
+                  <col style={{ width: "22%" }} />
+                  <col style={{ width: "34%" }} />
+                  <col style={{ width: "22%" }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th style={thStyle}>Song</th>
+                    <th style={thStyle}>Artist</th>
+                    <th style={thStyle}>Comments</th>
+                    <th style={thStyle}>Submitted</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {suggestions.map((s) => (
+                    <tr key={s.id}>
+                      <td style={tdStyle}>{s.song_name}</td>
+                      <td style={tdStyle}>{s.artist_name || "—"}</td>
+                      <td style={tdStyle}>{s.comments || "—"}</td>
+                      <td style={tdStyle}>
+                        {new Date(s.submitted_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                        <br />
+                        <span style={{ fontSize: "0.8em", color: "#888" }}>
+                          {new Date(s.submitted_at).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       )}
@@ -125,10 +139,14 @@ const thStyle = {
   textAlign: "left",
   borderBottom: "2px solid #ccc",
   padding: "0.5rem",
+  wordBreak: "break-word",
+  overflowWrap: "break-word",
 };
 
 const tdStyle = {
   borderBottom: "1px solid #eee",
   padding: "0.5rem",
   verticalAlign: "top",
+  wordBreak: "break-word",
+  overflowWrap: "break-word",
 };

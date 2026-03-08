@@ -7,18 +7,23 @@ import { supabase } from '../supabaseClient';
 export default function Lyrics() {
   const { isAdmin, user } = useAuth();
   const {
-    content,
-    title,
-    artist,
-    currentLine,
-    updateLyrics,
-    updateTitle,
-    updateArtist,
-    updateCurrentLine
+    content, title, artist, currentLine,
+    updateCurrentLine,
+    queue, queueIndex,
+    addToQueue, updateQueueSlot, removeFromQueue, goLive, clearLive, nextSong, prevSong,
   } = useLyricsSync();
-  const [isExpanded, setIsExpanded] = useState(true);
+
+  // Start in Setup if there's nothing queued/live yet, else go straight to Live
+  const [liveMode, setLiveMode] = useState(() => queue.length > 0 || !!content);
+  const [expandedSlots, setExpandedSlots] = useState(new Set());
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+
+  const toggleSlotExpand = (i) => setExpandedSlots((prev) => {
+    const next = new Set(prev);
+    if (next.has(i)) next.delete(i); else next.add(i);
+    return next;
+  });
 
   // Fetch like state whenever the song title changes
   useEffect(() => {
@@ -67,78 +72,140 @@ export default function Lyrics() {
 
   const lines = useMemo(() => content.split('\n'), [content]);
 
+  // ── SETUP MODE (admin only) ────────────────────────────────────────────────
+  if (isAdmin && !liveMode) {
+    return (
+      <div className="lyrics-page">
+        <div className="lyrics-console">
+          <div className="mode-header">
+            <h2 className="lyrics-console-title" style={{ margin: 0 }}>Setup</h2>
+            <button className="mode-toggle-btn" onClick={() => setLiveMode(true)}>
+              Live View →
+            </button>
+          </div>
+
+          <div className="queue-panel">
+            <div className="queue-panel-header">
+              <span className="queue-panel-title">Song Queue</span>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                {queueIndex >= 0 && (
+                  <button className="lyrics-action danger" onClick={clearLive}>Clear Live</button>
+                )}
+                <button className="lyrics-action" onClick={() => addToQueue()}>+ Add Song</button>
+              </div>
+            </div>
+
+            {queue.length === 0 && (
+              <p className="queue-empty">No songs queued yet. Add a song to get started.</p>
+            )}
+
+            {queue.map((slot, i) => (
+              <div key={i} className={`queue-slot${queueIndex === i ? ' queue-slot-live' : ''}`}>
+                <div className="queue-slot-header">
+                  <div className="queue-slot-top">
+                    <span className="queue-slot-num">{i + 1}</span>
+                    <div className="queue-slot-meta">
+                      <input
+                        className="queue-slot-input"
+                        placeholder="Song title"
+                        value={slot.title}
+                        onChange={(e) => updateQueueSlot(i, 'title', e.target.value)}
+                      />
+                      <input
+                        className="queue-slot-input"
+                        placeholder="Artist"
+                        value={slot.artist}
+                        onChange={(e) => updateQueueSlot(i, 'artist', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <div className="queue-slot-actions">
+                    <button className="lyrics-action" onClick={() => toggleSlotExpand(i)}>
+                      {expandedSlots.has(i) ? 'Hide' : 'Lyrics'}
+                    </button>
+                    <button
+                      className={`lyrics-action${queueIndex === i ? ' queue-live-btn' : ''}`}
+                      onClick={() => { goLive(i); setLiveMode(true); }}
+                    >
+                      {queueIndex === i ? '● Live' : '▶ Go Live'}
+                    </button>
+                    <button className="lyrics-action danger" onClick={() => removeFromQueue(i)}>✕</button>
+                  </div>
+                </div>
+                {expandedSlots.has(i) && (
+                  <textarea
+                    className="queue-slot-textarea"
+                    placeholder="Paste lyrics here..."
+                    value={slot.content}
+                    onChange={(e) => updateQueueSlot(i, 'content', e.target.value)}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── LIVE MODE ──────────────────────────────────────────────────────────────
   return (
     <div className="lyrics-page">
       <div className="lyrics-console">
-        <h2 className="lyrics-console-title">Lyrics Console</h2>
 
-        <div className="lyrics-meta">
-          {isAdmin ? (
-            <div className="meta-inputs">
-              <input
-                className="meta-input"
-                type="text"
-                placeholder="Song title"
-                value={title}
-                onChange={(e) => updateTitle(e.target.value)}
-              />
-              <input
-                className="meta-input"
-                type="text"
-                placeholder="Artist"
-                value={artist}
-                onChange={(e) => updateArtist(e.target.value)}
-              />
+        {/* Admin toolbar */}
+        {isAdmin && (
+          <div className="mode-header">
+            <div className="mode-live-nav">
+              {queue.length > 1 && (
+                <>
+                  <button
+                    className="lyrics-action"
+                    disabled={queueIndex <= 0}
+                    onClick={prevSong}
+                  >← Prev</button>
+                  <span className="queue-nav-label">
+                    {queueIndex >= 0 ? `${queueIndex + 1} / ${queue.length}` : `— / ${queue.length}`}
+                  </span>
+                  <button
+                    className="lyrics-action"
+                    disabled={queueIndex >= queue.length - 1}
+                    onClick={nextSong}
+                  >Next →</button>
+                </>
+              )}
             </div>
-          ) : (
-            <div className="meta-display">
-              <div className="meta-title">{title || 'Untitled'}</div>
-              <div className="meta-artist">{artist || 'Unknown Artist'}</div>
-            </div>
+            <button className="mode-toggle-btn" onClick={() => setLiveMode(false)}>
+              ✎ Setup
+            </button>
+          </div>
+        )}
+
+        {/* Song meta */}
+        <div className="meta-display">
+          <div className="meta-title">{title || (isAdmin ? 'No song selected' : 'Untitled')}</div>
+          {(artist || !isAdmin) && (
+            <div className="meta-artist">{artist || 'Unknown Artist'}</div>
           )}
         </div>
 
+        {/* Like button */}
         {user && (
-          <div style={{ margin: '0.75rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="like-row">
             <button
               onClick={handleLike}
               disabled={!title}
-              style={{ background: 'none', border: 'none', cursor: title ? 'pointer' : 'default', fontSize: '1.4rem', color: liked ? '#e74c3c' : '#aaa', opacity: title ? 1 : 0.4 }}
+              className="like-btn"
+              style={{ color: liked ? '#e74c3c' : 'rgba(255,255,255,0.4)', opacity: title ? 1 : 0.35 }}
               title={!title ? 'No song playing' : liked ? 'Unlike' : 'Like this song'}
             >
               {liked ? <FaHeart /> : <FaRegHeart />}
             </button>
-            <span style={{ fontSize: '0.95rem', color: '#666' }}>{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
+            <span className="like-count">{likeCount} {likeCount === 1 ? 'like' : 'likes'}</span>
           </div>
         )}
 
-        {isAdmin && (
-          <div className="lyrics-editor-wrapper">
-            <div className="lyrics-editor-actions">
-              <button
-                type="button"
-                className="lyrics-action"
-                onClick={() => setIsExpanded((prev) => !prev)}
-              >
-                {isExpanded ? 'Contract' : 'Expand'}
-              </button>
-              <button
-                type="button"
-                className="lyrics-action danger"
-                onClick={() => updateLyrics('')}
-              >
-                Clear
-              </button>
-            </div>
-            <textarea
-              className={`lyrics-editor ${isExpanded ? '' : 'collapsed'}`}
-              placeholder="Paste or type lyrics here..."
-              value={content}
-              onChange={(e) => updateLyrics(e.target.value)}
-            />
-          </div>
-        )}
-
+        {/* Lyrics display */}
         <div className="lyrics-display">
           {content ? (
             lines.map((line, index) => (
@@ -148,16 +215,9 @@ export default function Lyrics() {
                 onClick={isAdmin ? () => updateCurrentLine(index) : undefined}
                 role={isAdmin ? 'button' : undefined}
                 tabIndex={isAdmin ? 0 : -1}
-                onKeyDown={
-                  isAdmin
-                    ? (event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault();
-                          updateCurrentLine(index);
-                        }
-                      }
-                    : undefined
-                }
+                onKeyDown={isAdmin ? (e) => {
+                  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); updateCurrentLine(index); }
+                } : undefined}
               >
                 {line || '\u00A0'}
               </div>

@@ -1,32 +1,32 @@
 import "./LikedSongs.css";
 import { FaHeart } from "react-icons/fa";
 
-export default function LikedSongs({ songs, loading, user }) {
+export default function LikedSongs({ songs, loading }) {
   return (
     <div className="liked-songs">
       <h2 className="liked-songs-title">Liked Songs</h2>
 
-      {!user && (
-        <p style={{ color: '#888', marginTop: '1rem' }}>Sign in to see your liked songs.</p>
+      {loading && (
+        <p className="liked-songs-empty">Loading...</p>
       )}
 
-      {user && loading && (
-        <p style={{ color: '#888', marginTop: '1rem' }}>Loading...</p>
+      {!loading && songs.length === 0 && (
+        <p className="liked-songs-empty">No songs have been liked yet. Like a song on the Lyrics page!</p>
       )}
 
-      {user && !loading && songs.length === 0 && (
-        <p style={{ color: '#888', marginTop: '1rem' }}>You haven't liked any songs yet. Like a song on the Lyrics page!</p>
+      {!loading && (
+        <ol className="liked-songs-list">
+          {songs.map((song, index) => (
+            <li key={index} className="liked-song-row">
+              <span className="song-title">{song.title}</span>
+              <span className="song-likes">
+                <FaHeart className="heart-icon" />
+                {song.likes}
+              </span>
+            </li>
+          ))}
+        </ol>
       )}
-
-      {user && !loading && songs.map((song, index) => (
-        <div key={index} className="liked-song-item">
-          <span className="song-title">{song.title}</span>
-          <span className="song-likes">
-            <FaHeart className="heart-icon" />
-            {song.likes}
-          </span>
-        </div>
-      ))}
     </div>
   );
 }

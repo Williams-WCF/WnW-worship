@@ -298,7 +298,8 @@ html, body {
 .lyrics-page {
   display: flex;
   justify-content: center;
-  padding: 2rem 1rem 3rem;
+  padding: 2rem 1.25rem 3rem;
+  box-sizing: border-box;
 }
 
 .lyrics-console {
@@ -318,6 +319,69 @@ html, body {
   color: #ffd700;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+/* ── Mode header (Setup / Live toggle bar) ───────────────────────────────── */
+
+.mode-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  gap: 0.75rem;
+}
+
+.mode-live-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.mode-toggle-btn {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mode-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+/* ── Like row ─────────────────────────────────────────────────────────────── */
+
+.like-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+}
+
+.like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.4rem;
+  padding: 0;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.like-btn:hover:not(:disabled) {
+  transform: scale(1.2);
+}
+
+.like-count {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.55);
 }
 
 .lyrics-meta {
@@ -420,6 +484,156 @@ html, body {
 .lyrics-action.danger:hover {
   background: rgba(255, 215, 0, 1);
 }
+
+/* ── Song Queue Panel ─────────────────────────────────────────────────────── */
+
+.queue-panel {
+  margin-bottom: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.queue-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.queue-panel-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.queue-empty {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+  padding: 0.5rem 0;
+}
+
+.queue-slot {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.queue-slot-live {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.5);
+}
+
+.queue-slot-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.queue-slot-top {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.queue-slot-num {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.4);
+  min-width: 1.25rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.queue-slot-meta {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.queue-slot-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.queue-slot-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.queue-slot-actions {
+  display: flex;
+  gap: 0.4rem;
+  padding-left: 1.85rem; /* align with inputs, past the number */
+  flex-wrap: wrap;
+}
+
+.queue-live-btn {
+  background: rgba(255, 215, 0, 0.85) !important;
+  color: #3c1361 !important;
+}
+
+.queue-live-btn:hover {
+  background: rgba(255, 215, 0, 1) !important;
+}
+
+.queue-slot-textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.queue-slot-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.queue-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.queue-nav-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  min-width: 4rem;
+  text-align: center;
+}
+
+.queue-nav button:disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 
 .lyrics-editor.collapsed {
   min-height: 3.8rem;
