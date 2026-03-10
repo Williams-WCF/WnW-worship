@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../supabaseClient';
 
-const STORAGE_KEYS = {
-  content: 'lyrics_content',
-  title: 'lyrics_title',
-  artist: 'lyrics_artist',
-  currentLine: 'lyrics_currentLine',
+// Queue is admin-local only — persisted in localStorage
+const QUEUE_KEYS = {
   queue: 'lyrics_queue',
   queueIndex: 'lyrics_queueIndex',
 };
@@ -25,203 +22,121 @@ const saveToStorage = (key, value) => {
   } catch {}
 };
 
-export const useLyricsSync = (channelName = 'lyrics-session') => {
-  const storedQueue = loadFromStorage(STORAGE_KEYS.queue, []);
-  const storedIndex = loadFromStorage(STORAGE_KEYS.queueIndex, -1);
-  const hasLive = storedIndex >= 0;
+// Write the live session row to Supabase (single row, id = 1)
+const upsertSession = async (fields) => {
+  const { error } = await supabase
+    .from('live_session')
+    .update(fields)
+    .eq('id', 1);
+  if (error) console.error('[useLyricsSync] upsert failed:', error);
+};
 
-  // If nothing is marked live, wipe any stale live content from storage on init
-  if (!hasLive) {
-    saveToStorage(STORAGE_KEYS.content, '');
-    saveToStorage(STORAGE_KEYS.title, '');
-    saveToStorage(STORAGE_KEYS.artist, '');
-    saveToStorage(STORAGE_KEYS.currentLine, null);
-  }
-
-  const [content, setContent] = useState(() => hasLive ? loadFromStorage(STORAGE_KEYS.content, '') : '');
-  const [title, setTitle] = useState(() => hasLive ? loadFromStorage(STORAGE_KEYS.title, '') : '');
-  const [artist, setArtist] = useState(() => hasLive ? loadFromStorage(STORAGE_KEYS.artist, '') : '');
-  const [currentLine, setCurrentLine] = useState(() => hasLive ? loadFromStorage(STORAGE_KEYS.currentLine, null) : null);
-  const [queue, setQueue] = useState(() => storedQueue);
-  const [queueIndex, setQueueIndex] = useState(() => storedIndex);
+export const useLyricsSync = () => {
+  const [content, setContent] = useState('');
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [currentLine, setCurrentLine] = useState(null);
+  const [queue, setQueue] = useState(() => loadFromStorage(QUEUE_KEYS.queue, []));
+  const [queueIndex, setQueueIndex] = useState(() => loadFromStorage(QUEUE_KEYS.queueIndex, -1));
   const channelRef = useRef(null);
 
   useEffect(() => {
-    const channel = supabase.channel(channelName, {
-      config: {
-        broadcast: { self: false }
-      }
-    });
+    // 1. Fetch current state from DB on mount so every client is up to date
+    supabase
+      .from('live_session')
+      .select('content, title, artist, current_line')
+      .eq('id', 1)
+      .single()
+      .then(({ data }) => {
+        if (data) {
+          setContent(data.content ?? '');
+          setTitle(data.title ?? '');
+          setArtist(data.artist ?? '');
+          setCurrentLine(data.current_line ?? null);
+        }
+      });
 
-    channel
-      .on('broadcast', { event: 'lyrics-update' }, (payload) => {
-        if (payload?.payload?.content !== undefined) {
-          setContent(payload.payload.content);
-          saveToStorage(STORAGE_KEYS.content, payload.payload.content);
+    // 2. Subscribe to Postgres row-level changes so all clients update in real time
+    const channel = supabase
+      .channel('live-session-changes')
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'live_session', filter: 'id=eq.1' },
+        ({ new: row }) => {
+          setContent(row.content ?? '');
+          setTitle(row.title ?? '');
+          setArtist(row.artist ?? '');
+          setCurrentLine(row.current_line ?? null);
         }
-      })
-      .on('broadcast', { event: 'title-update' }, (payload) => {
-        if (payload?.payload?.title !== undefined) {
-          setTitle(payload.payload.title);
-          saveToStorage(STORAGE_KEYS.title, payload.payload.title);
-        }
-      })
-      .on('broadcast', { event: 'artist-update' }, (payload) => {
-        if (payload?.payload?.artist !== undefined) {
-          setArtist(payload.payload.artist);
-          saveToStorage(STORAGE_KEYS.artist, payload.payload.artist);
-        }
-      })
-      .on('broadcast', { event: 'line-update' }, (payload) => {
-        if (payload?.payload?.line !== undefined) {
-          setCurrentLine(payload.payload.line);
-          saveToStorage(STORAGE_KEYS.currentLine, payload.payload.line);
-        }
-      })
+      )
       .subscribe();
 
     channelRef.current = channel;
-
     return () => {
       channel.unsubscribe();
       channelRef.current = null;
     };
-  }, [channelName]);
-
-  const updateLyrics = (nextContent) => {
-    setContent(nextContent);
-    saveToStorage(STORAGE_KEYS.content, nextContent);
-
-    if (channelRef.current) {
-      channelRef.current.send({
-        type: 'broadcast',
-        event: 'lyrics-update',
-        payload: { content: nextContent }
-      });
-    }
-  };
-
-  const updateTitle = (nextTitle) => {
-    setTitle(nextTitle);
-    saveToStorage(STORAGE_KEYS.title, nextTitle);
-
-    if (channelRef.current) {
-      channelRef.current.send({
-        type: 'broadcast',
-        event: 'title-update',
-        payload: { title: nextTitle }
-      });
-    }
-  };
-
-  const updateArtist = (nextArtist) => {
-    setArtist(nextArtist);
-    saveToStorage(STORAGE_KEYS.artist, nextArtist);
-
-    if (channelRef.current) {
-      channelRef.current.send({
-        type: 'broadcast',
-        event: 'artist-update',
-        payload: { artist: nextArtist }
-      });
-    }
-  };
+  }, []);
 
   const updateCurrentLine = (lineIndex) => {
     setCurrentLine(lineIndex);
-    saveToStorage(STORAGE_KEYS.currentLine, lineIndex);
-
-    if (channelRef.current) {
-      channelRef.current.send({
-        type: 'broadcast',
-        event: 'line-update',
-        payload: { line: lineIndex }
-      });
-    }
+    upsertSession({ current_line: lineIndex });
   };
 
-  // ── Queue management (admin-local, no broadcast) ──────────────────────────
+  // ── Queue management (admin-local) ────────────────────────────────────────
 
   const clearLive = () => {
-    setContent(''); saveToStorage(STORAGE_KEYS.content, '');
-    setTitle('');   saveToStorage(STORAGE_KEYS.title, '');
-    setArtist('');  saveToStorage(STORAGE_KEYS.artist, '');
-    setCurrentLine(null); saveToStorage(STORAGE_KEYS.currentLine, null);
-    if (channelRef.current) {
-      channelRef.current.send({ type: 'broadcast', event: 'lyrics-update', payload: { content: '' } });
-      channelRef.current.send({ type: 'broadcast', event: 'title-update',  payload: { title:   '' } });
-      channelRef.current.send({ type: 'broadcast', event: 'artist-update', payload: { artist:  '' } });
-      channelRef.current.send({ type: 'broadcast', event: 'line-update',   payload: { line:  null } });
-    }
+    upsertSession({ content: '', title: '', artist: '', current_line: null });
+    // local state is updated via the realtime subscription, but set immediately for responsiveness
+    setContent(''); setTitle(''); setArtist(''); setCurrentLine(null);
   };
 
   const addToQueue = (slot = { title: '', artist: '', content: '' }) => {
     const next = [...queue, slot];
     setQueue(next);
-    saveToStorage(STORAGE_KEYS.queue, next);
+    saveToStorage(QUEUE_KEYS.queue, next);
   };
 
   const updateQueueSlot = (index, field, value) => {
     const next = queue.map((s, i) => i === index ? { ...s, [field]: value } : s);
     setQueue(next);
-    saveToStorage(STORAGE_KEYS.queue, next);
+    saveToStorage(QUEUE_KEYS.queue, next);
   };
 
   const removeFromQueue = (index) => {
     const wasLive = queueIndex === index;
     const next = queue.filter((_, i) => i !== index);
     setQueue(next);
-    saveToStorage(STORAGE_KEYS.queue, next);
+    saveToStorage(QUEUE_KEYS.queue, next);
     let ni = queueIndex;
     if (wasLive) { ni = -1; clearLive(); }
     else if (queueIndex > index) ni = queueIndex - 1;
     setQueueIndex(ni);
-    saveToStorage(STORAGE_KEYS.queueIndex, ni);
+    saveToStorage(QUEUE_KEYS.queueIndex, ni);
   };
 
   const goLive = (index) => {
     const slot = queue[index];
     if (!slot) return;
     setQueueIndex(index);
-    saveToStorage(STORAGE_KEYS.queueIndex, index);
-    // Reuse existing broadcast functions
+    saveToStorage(QUEUE_KEYS.queueIndex, index);
+    // Write to DB — the realtime subscription propagates it to all clients
+    upsertSession({ content: slot.content, title: slot.title, artist: slot.artist, current_line: null });
+    // Update local state immediately for the admin who pressed Go Live
     setContent(slot.content);
-    saveToStorage(STORAGE_KEYS.content, slot.content);
     setTitle(slot.title);
-    saveToStorage(STORAGE_KEYS.title, slot.title);
     setArtist(slot.artist);
-    saveToStorage(STORAGE_KEYS.artist, slot.artist);
     setCurrentLine(null);
-    saveToStorage(STORAGE_KEYS.currentLine, null);
-    if (channelRef.current) {
-      channelRef.current.send({ type: 'broadcast', event: 'lyrics-update', payload: { content: slot.content } });
-      channelRef.current.send({ type: 'broadcast', event: 'title-update',  payload: { title:   slot.title   } });
-      channelRef.current.send({ type: 'broadcast', event: 'artist-update', payload: { artist:  slot.artist  } });
-      channelRef.current.send({ type: 'broadcast', event: 'line-update',   payload: { line:    null         } });
-    }
   };
 
   const nextSong = () => { if (queueIndex < queue.length - 1) goLive(queueIndex + 1); };
   const prevSong = () => { if (queueIndex > 0) goLive(queueIndex - 1); };
 
   return {
-    content,
-    title,
-    artist,
-    currentLine,
-    updateLyrics,
-    updateTitle,
-    updateArtist,
+    content, title, artist, currentLine,
     updateCurrentLine,
-    // Queue
-    queue,
-    queueIndex,
-    addToQueue,
-    updateQueueSlot,
-    removeFromQueue,
-    goLive,
-    clearLive,
-    nextSong,
-    prevSong,
+    queue, queueIndex,
+    addToQueue, updateQueueSlot, removeFromQueue,
+    goLive, clearLive, nextSong, prevSong,
   };
 };
