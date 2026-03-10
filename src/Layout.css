@@ -346,7 +346,7 @@ html, body {
 .lyrics-page {
   display: flex;
   justify-content: center;
-  padding: 2rem 1.25rem 3rem;
+  padding: 1rem 0.75rem 2rem;
   box-sizing: border-box;
 }
 
@@ -359,6 +359,8 @@ html, body {
   padding: 2rem;
   backdrop-filter: blur(10px);
   box-shadow: 0 20px 60px rgba(23, 5, 37, 0.35);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .lyrics-console-title {
