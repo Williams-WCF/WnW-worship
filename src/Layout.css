@@ -152,6 +152,51 @@ html, body {
   box-sizing: border-box;
 }
 
+/* ── Suggestion cards (admin view) ─────────────────────── */
+.suggestions-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  text-align: left;
+}
+
+.suggestion-card {
+  background: #ede8f7;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.suggestion-card-main {
+  font-size: 0.97rem;
+  line-height: 1.4;
+}
+
+.suggestion-song {
+  font-weight: 700;
+  color: #2d1a56;
+}
+
+.suggestion-artist {
+  font-weight: 400;
+  color: #5a4a7a;
+}
+
+.suggestion-comments {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #4a3a6a;
+}
+
+.suggestion-date {
+  font-size: 0.75rem;
+  color: #9e92b8;
+}
+
+
 .suggest-title {
   color: #500082;
   font-size: 1.8rem;
