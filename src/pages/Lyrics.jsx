@@ -14,7 +14,7 @@ export default function Lyrics() {
   } = useLyricsSync();
 
   // Start in Setup if there's nothing queued/live yet, else go straight to Live
-  const [liveMode, setLiveMode] = useState(() => queue.length > 0 || !!content);
+  const [liveMode, setLiveMode] = useState(true);
   const [expandedSlots, setExpandedSlots] = useState(new Set());
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
