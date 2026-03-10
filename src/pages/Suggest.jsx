@@ -97,10 +97,10 @@ export default function Suggest() {
             <div style={{ overflowX: "auto", width: "100%" }}>
               <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: "300px" }}>
                 <colgroup>
+                  <col style={{ width: "30%" }} />
                   <col style={{ width: "22%" }} />
-                  <col style={{ width: "22%" }} />
-                  <col style={{ width: "34%" }} />
-                  <col style={{ width: "22%" }} />
+                  <col style={{ width: "28%" }} />
+                  <col style={{ width: "20%" }} />
                 </colgroup>
                 <thead>
                   <tr>
@@ -139,8 +139,7 @@ const thStyle = {
   textAlign: "left",
   borderBottom: "2px solid #ccc",
   padding: "0.5rem",
-  wordBreak: "break-word",
-  overflowWrap: "break-word",
+  whiteSpace: "nowrap",
 };
 
 const tdStyle = {

@@ -144,10 +144,12 @@ html, body {
   background-color: #faf5ff;
   padding: 2rem;
   border-radius: 16px;
+  width: calc(100% - 2.5rem);
   max-width: 500px;
   margin: 3rem auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   text-align: center;
+  box-sizing: border-box;
 }
 
 .suggest-title {
@@ -171,6 +173,7 @@ html, body {
 .suggest-input,
 .suggest-textarea {
   width: 100%;
+  box-sizing: border-box;
   border: 1px solid #c4b5fd;
   border-radius: 12px;
   padding: 0.8rem 1rem;
@@ -859,8 +862,8 @@ html, body {
 
 @media (max-width: 600px) {
   .suggest-container {
-    margin: 2rem 1rem;
-    padding: 1.5rem;
+    margin: 2rem auto;
+    padding: 1.25rem;
   }
   .suggest-title {
     font-size: 1.5rem;

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../supabaseClient';
 
+const INACTIVITY_MS = 30 * 60 * 1000; // 30 minutes
+
 // Queue is admin-local only — persisted in localStorage
 const QUEUE_KEYS = {
   queue: 'lyrics_queue',
