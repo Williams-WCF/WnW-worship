@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaHeart, FaRegHeart } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 import { useLyricsSync } from '../hooks/useLyricsSync';
@@ -71,6 +71,14 @@ export default function Lyrics() {
   };
 
   const lines = useMemo(() => content.split('\n'), [content]);
+  const lineRefs = useRef([]);
+
+  // Auto-scroll to highlighted line for all users (including non-selecting admins)
+  useEffect(() => {
+    if (currentLine === null || currentLine === undefined) return;
+    const el = lineRefs.current[currentLine];
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [currentLine]);
 
   // ── SETUP MODE (admin only) ────────────────────────────────────────────────
   if (isAdmin && !liveMode) {
@@ -211,6 +219,7 @@ export default function Lyrics() {
             lines.map((line, index) => (
               <div
                 key={`${index}-${line}`}
+                ref={el => { lineRefs.current[index] = el; }}
                 className={`lyrics-line ${currentLine === index ? 'active' : ''}`}
                 onClick={isAdmin ? () => updateCurrentLine(index) : undefined}
                 role={isAdmin ? 'button' : undefined}
