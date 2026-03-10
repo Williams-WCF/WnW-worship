@@ -7,9 +7,6 @@ import {FaHeart, FaMusic, FaCommentDots } from "react-icons/fa";
 export default function MainNavigation() {
   return (
     <div className="nav-bar">
-      {/* <Link to="/main-home" className="nav-link">
-        <span className="emoji"><FaHome size={18} style={{ marginRight: "8px" }} /></span> Home
-      </Link> */}
       <Link to="/lyrics" className="nav-link">
         <span className="emoji"><FaMusic size={18} color="#9c95a0ff" title="Lyrics" /></span> Current Song
       </Link>

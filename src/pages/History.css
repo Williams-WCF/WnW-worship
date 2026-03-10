@@ -1,0 +1,99 @@
+.history-page {
+  padding: 1.5rem 1.25rem;
+  max-width: 680px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.history-heading {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  color: var(--color-primary, #3d1e6d);
+}
+
+/* ── Week group ─────────────────────────────────────────── */
+.history-week {
+  margin-bottom: 1.75rem;
+}
+
+.history-week-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #7b6fa0;
+  border-bottom: 1px solid #e0d8f0;
+  padding-bottom: 0.35rem;
+  margin: 0 0 0.6rem;
+}
+
+/* ── Song rows ──────────────────────────────────────────── */
+.history-song-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.history-song-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ede8f7;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  gap: 0.75rem;
+}
+
+.history-song-info {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.3rem;
+  min-width: 0;
+}
+
+.history-song-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #2d1a56;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.history-song-artist {
+  font-size: 0.88rem;
+  color: #5a4a7a;
+}
+
+.history-song-time {
+  font-size: 0.75rem;
+  color: #9e92b8;
+  white-space: nowrap;
+  margin-left: 0.25rem;
+}
+
+/* ── Like badge ─────────────────────────────────────────── */
+.history-likes {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e63946;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Empty / loading states ─────────────────────────────── */
+.history-loading,
+.history-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #777;
+  font-size: 0.95rem;
+}

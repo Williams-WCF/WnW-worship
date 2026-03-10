@@ -15,6 +15,7 @@ import Signup from "./pages/Signup";
 import Suggest from "./pages/Suggest";
 import Songs from "./pages/Songs";
 import Admin from "./pages/Admin";
+import History from "./pages/History";
 
 // Protected Layout wrapper
 function ProtectedLayout() {
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="/main-home" element={<MainHome />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/history" element={<History />} />
         </Route>
       </Routes>
     </BrowserRouter>

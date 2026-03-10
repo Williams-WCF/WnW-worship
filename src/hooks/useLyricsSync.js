@@ -43,18 +43,37 @@ export const useLyricsSync = () => {
   const channelRef = useRef(null);
 
   useEffect(() => {
-    // 1. Fetch current state from DB on mount so every client is up to date
+    const isStale = (updatedAt) =>
+      updatedAt && Date.now() - new Date(updatedAt).getTime() > INACTIVITY_MS;
+
+    const clearIfStale = async () => {
+      const { data } = await supabase
+        .from('live_session')
+        .select('updated_at, title')
+        .eq('id', 1)
+        .single();
+      if (data?.title && isStale(data.updated_at)) {
+        upsertSession({ content: '', title: '', artist: '', current_line: null });
+        setContent(''); setTitle(''); setArtist(''); setCurrentLine(null);
+      }
+    };
+
+    // 1. Fetch current state from DB on mount; auto-clear if stale
     supabase
       .from('live_session')
-      .select('content, title, artist, current_line')
+      .select('content, title, artist, current_line, updated_at')
       .eq('id', 1)
       .single()
       .then(({ data }) => {
         if (data) {
-          setContent(data.content ?? '');
-          setTitle(data.title ?? '');
-          setArtist(data.artist ?? '');
-          setCurrentLine(data.current_line ?? null);
+          if (isStale(data.updated_at) && data.title) {
+            upsertSession({ content: '', title: '', artist: '', current_line: null });
+          } else {
+            setContent(data.content ?? '');
+            setTitle(data.title ?? '');
+            setArtist(data.artist ?? '');
+            setCurrentLine(data.current_line ?? null);
+          }
         }
       });
 
@@ -74,9 +93,14 @@ export const useLyricsSync = () => {
       .subscribe();
 
     channelRef.current = channel;
+
+    // 3. Poll every minute and clear if the session has been idle for 30+ min
+    const inactivityTimer = setInterval(clearIfStale, 60 * 1000);
+
     return () => {
       channel.unsubscribe();
       channelRef.current = null;
+      clearInterval(inactivityTimer);
     };
   }, []);
 
@@ -129,6 +153,15 @@ export const useLyricsSync = () => {
     setTitle(slot.title);
     setArtist(slot.artist);
     setCurrentLine(null);
+    // Record in history
+    if (slot.title) {
+      supabase
+        .from('song_history')
+        .insert({ title: slot.title, artist: slot.artist ?? '' })
+        .then(({ error }) => {
+          if (error) console.error('[useLyricsSync] song_history insert failed:', error);
+        });
+    }
   };
 
   const nextSong = () => { if (queueIndex < queue.length - 1) goLive(queueIndex + 1); };

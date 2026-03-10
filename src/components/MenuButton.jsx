@@ -23,6 +23,7 @@ export default function MenuButton(){
           <Link to="/lyrics" className="lyrics" onClick={handleLinkClick}>Lyrics</Link>
           <Link to="/songs" className="songs" onClick={handleLinkClick}>Liked Songs</Link>
           <Link to="/suggest" className="suggest" onClick={handleLinkClick}>Suggest</Link>
+          <Link to="/history" className="history" onClick={handleLinkClick}>History</Link>
           <Link to="/logout" className="logout" onClick={handleLinkClick}>Logout</Link>
           {isAdmin && (
             <Link to="/admin" className="admin" onClick={handleLinkClick}>Admin</Link>
