@@ -8,10 +8,10 @@ export default function MainNavigation() {
   return (
     <div className="nav-bar">
       <Link to="/lyrics" className="nav-link">
-        <span className="emoji"><FaMusic size={18} color="#9c95a0ff" title="Lyrics" /></span> Current Song
+        <span className="emoji"><FaMusic size={18} color="#9c95a0ff" title="Lyrics" /></span> Current
       </Link>
       <Link to="/songs" className="nav-link">
-        <span className="emoji"><FaHeart size={18} color="#e63946" title="Like" /></span> Liked Songs
+        <span className="emoji"><FaHeart size={18} color="#e63946" title="Like" /></span> Liked
       </Link>
       <Link to="/suggest" className="nav-link">
         <span className="emoji"><FaCommentDots size={18} color="#ffd700" title="Suggest" /></span> Suggest

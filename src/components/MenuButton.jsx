@@ -19,10 +19,11 @@ export default function MenuButton(){
       </button>
       {open && (
         <div className="menu-dropdown">
-          <Link to="/main-home" className="main-home" onClick={handleLinkClick}>Home</Link>
+          {/* <Link to="/lyrics" className="main-home" onClick={handleLinkClick}>Home</Link>
           <Link to="/lyrics" className="lyrics" onClick={handleLinkClick}>Lyrics</Link>
           <Link to="/songs" className="songs" onClick={handleLinkClick}>Liked Songs</Link>
-          <Link to="/suggest" className="suggest" onClick={handleLinkClick}>Suggest</Link>
+          <Link to="/suggest" className="suggest" onClick={handleLinkClick}>Suggest</Link> */}
+          {/*this to remove the redundancy */}
           <Link to="/history" className="history" onClick={handleLinkClick}>History</Link>
           <Link to="/logout" className="logout" onClick={handleLinkClick}>Logout</Link>
           {isAdmin && (
